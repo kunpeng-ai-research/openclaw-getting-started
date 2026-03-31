@@ -19,13 +19,30 @@ def create_xiaohongshu_image(filename, title, content_lines, bg_color1, bg_color
         b = int(bg_color1[2] + (bg_color2[2] - bg_color1[2]) * y / height)
         draw.line([(0, y), (width, y)], fill=(r, g, b))
     
-    # 标题
-    try:
-        font_title = ImageFont.truetype("arial.ttf", 72)
-        font_content = ImageFont.truetype("arial.ttf", 48)
-    except:
+    # 尝试加载中文字体
+    font_paths = [
+        "C:/Windows/Fonts/msyh.ttc",  # 微软雅黑
+        "C:/Windows/Fonts/simhei.ttf",  # 黑体
+        "C:/Windows/Fonts/simsun.ttc",  # 宋体
+        "C:/Windows/Fonts/arial.ttf",   # 回退到Arial
+    ]
+    
+    font_title = None
+    font_content = None
+    
+    for path in font_paths:
+        try:
+            font_title = ImageFont.truetype(path, 72)
+            font_content = ImageFont.truetype(path, 48)
+            print(f"[OK] Using font: {path}")
+            break
+        except:
+            continue
+    
+    if font_title is None:
         font_title = ImageFont.load_default()
         font_content = ImageFont.load_default()
+        print("[WARN] Using default font (may not support Chinese)")
     
     # 绘制标题
     title_bbox = draw.textbbox((0, 0), title, font=font_title)
